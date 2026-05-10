@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tip-Top Autókozmetika Szekszárd | PréMIUM Állapotmegőrzés</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
+        
+        .nav-active { color: #0ea5e9; font-weight: 800; border-bottom: 2px solid #0ea5e9; }
+        .page-fade { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
+        
+        .mobile-cta-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; display: none; }
+        @media (max-width: 1023px) { .mobile-cta-bar { display: flex; } }
+
+        .diagnosis-btn:hover { border-color: #0ea5e9; background-color: #f0f9ff; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 pb-16 lg:pb-0">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100">
+        <div class="container mx-auto px-4 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('fooldal')">
+                <div class="bg-sky-600 text-white w-10 h-10 rounded-xl flex items-center justify-center font-black">TT</div>
+                <div>
+                    <h1 class="font-extrabold text-lg leading-none tracking-tight italic">TIP-TOP</h1>
+                    <p class="text-[10px] tracking-widest text-sky-600 font-bold uppercase">Szekszárd</p>
+                </div>
+            </div>
+
+            <nav class="hidden lg:flex items-center space-x-6 font-semibold text-sm">
+                <button onclick="navigateTo('fooldal')" class="nav-btn py-2 px-1 hover:text-sky-600 transition-colors" data-page="fooldal">Kezdőlap</button>
+                <button onclick="navigateTo('szolgaltatasok')" class="nav-btn py-2 px-1 hover:text-sky-600 transition-colors" data-page="szolgaltatasok">Szolgáltatások</button>
+                <button onclick="navigateTo('arak')" class="nav-btn py-2 px-1 hover:text-sky-600 transition-colors" data-page="arak">Árak</button>
+                <button onclick="navigateTo('ajanlatok')" class="nav-btn py-2 px-1 hover:text-sky-600 transition-colors" data-page="ajanlatok">Ajánlatok</button>
+                <button onclick="navigateTo('tudastar')" class="nav-btn py-2 px-1 hover:text-sky-600 transition-colors" data-page="tudastar">Tudástár</button>
+                <button onclick="navigateTo('rolunk')" class="nav-btn py-2 px-1 hover:text-sky-600 transition-colors" data-page="rolunk">Rólunk</button>
+                <button onclick="navigateTo('kapcsolat')" class="nav-btn py-2 px-1 hover:text-sky-600 transition-colors" data-page="kapcsolat">Kapcsolat</button>
+                <button onclick="navigateTo('foglalas')" class="bg-sky-600 text-white px-6 py-3 rounded-full hover:bg-sky-700 transition-all shadow-lg shadow-sky-200 font-black italic">Időpontfoglalás</button>
+            </nav>
+
+            <button class="lg:hidden text-2xl p-2" id="mobile-menu-btn"><i class="fa-solid fa-bars-staggered"></i></button>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-drawer" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
+        <div class="absolute right-0 top-0 h-full w-4/5 max-w-sm bg-white p-8 shadow-2xl overflow-y-auto">
+            <div class="flex justify-between items-center mb-10 text-sky-600 font-black">MENÜ <button onclick="toggleMobileMenu()" class="text-slate-900"><i class="fa-solid fa-xmark"></i></button></div>
+            <div class="flex flex-col space-y-6 font-bold text-lg">
+                <button onclick="navigateTo('fooldal'); toggleMobileMenu()">Kezdőlap</button>
+                <button onclick="navigateTo('szolgaltatasok'); toggleMobileMenu()">Szolgáltatások</button>
+                <button onclick="navigateTo('arak'); toggleMobileMenu()">Árak</button>
+                <button onclick="navigateTo('ajanlatok'); toggleMobileMenu()">Ajánlatok</button>
+                <button onclick="navigateTo('tudastar'); toggleMobileMenu()">Tudástár</button>
+                <button onclick="navigateTo('rolunk'); toggleMobileMenu()">Rólunk</button>
+                <button onclick="navigateTo('kapcsolat'); toggleMobileMenu()">Kapcsolat</button>
+                <button onclick="navigateTo('foglalas'); toggleMobileMenu()" class="bg-sky-600 text-white p-4 rounded-xl text-center">Időpontfoglalás</button>
+            </div>
+        </div>
+    </div>
+
+    <main id="app-container"></main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-20 mt-20">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div>
+                <h3 class="text-white font-black text-2xl mb-6 italic tracking-tighter">TIP-TOP</h3>
+                <p class="text-sm leading-relaxed mb-8 italic">„Nem az a kérdés, hogy lesznek-e karcok az autódon. Hanem az, hogy időben lépsz-e.”</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center hover:bg-sky-600 hover:text-white transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center hover:bg-sky-600 hover:text-white transition-all"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center hover:bg-sky-600 hover:text-white transition-all"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6 text-xs uppercase tracking-[0.2em]">Szolgáltatások</h4>
+                <ul class="space-y-3 text-sm font-medium">
+                    <li><button onclick="navigateTo('szolg-mosas')" class="hover:text-sky-400 transition-colors">Autómosás & Takarítás</button></li>
+                    <li><button onclick="navigateTo('szolg-karpit')" class="hover:text-sky-400 transition-colors">Kárpittisztítás</button></li>
+                    <li><button onclick="navigateTo('szolg-polir')" class="hover:text-sky-400 transition-colors">Polírozás</button></li>
+                    <li><button onclick="navigateTo('szolg-keramia')" class="hover:text-sky-400 transition-colors">Kerámia bevonat</button></li>
+                    <li><button onclick="navigateTo('szolg-klima')" class="hover:text-sky-400 transition-colors">Klímatisztítás</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6 text-xs uppercase tracking-[0.2em]">Kapcsolat</h4>
+                <div class="space-y-4 text-sm">
+                    <p class="flex items-start gap-3 italic"><i class="fa-solid fa-location-dot text-sky-500 mt-1"></i> 7100 Szekszárd, Pollack Mihály u. 37.</p>
+                    <p class="flex items-start gap-3"><i class="fa-solid fa-phone text-sky-500 mt-1"></i> +36 30 123 4567 (Kozmetika)</p>
+                    <p class="flex items-start gap-3"><i class="fa-solid fa-phone text-sky-500 mt-1"></i> +36 30 987 6543 (Mosó)</p>
+                    <p class="flex items-start gap-3"><i class="fa-solid fa-envelope text-sky-500 mt-1"></i> info@tiptopkozmetika.hu</p>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6 text-xs uppercase tracking-[0.2em]">Hírlevél</h4>
+                <p class="text-[11px] mb-4 uppercase font-bold tracking-wider">Hogyan őrizd meg autód fényét?</p>
+                <div class="flex p-1 bg-slate-800 rounded-xl">
+                    <input type="email" placeholder="E-mail" class="bg-transparent border-none px-4 py-2 text-xs w-full focus:ring-0 text-white">
+                    <button class="bg-sky-600 text-white px-4 py-2 rounded-lg text-xs font-black uppercase italic">Feliratkozom</button>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-4 mt-20 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between text-[10px] uppercase tracking-[0.3em] font-black">
+            <p>&copy; 2006-2024 Tip-Top Autókozmetika Szekszárd</p>
+            <div class="flex gap-8 mt-4 md:mt-0">
+                <a href="#" class="hover:text-white">Adatkezelés</a>
+                <a href="#" class="hover:text-white">Feltételek</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Fixed Bottom CTA -->
+    <div class="mobile-cta-bar h-20 bg-white border-t border-slate-200 shadow-xl">
+        <a href="tel:+36301234567" class="flex-1 flex flex-col items-center justify-center text-slate-700 border-r border-slate-100">
+            <i class="fa-solid fa-phone text-sky-600 mb-1"></i><span class="text-[10px] font-black uppercase">Hívás</span>
+        </a>
+        <button onclick="navigateTo('foglalas')" class="flex-[3] bg-sky-600 text-white font-black flex items-center justify-center gap-3 italic">
+            <i class="fa-solid fa-calendar-check"></i><span>IDŐPONTFOGLALÁS</span>
+        </button>
+    </div>
+
+    <!-- 1. HOME PAGE -->
+    <script id="tpl-fooldal" type="text/template">
+        <div class="page-fade">
+            <!-- Hero -->
+            <section class="hero-gradient min-h-[85vh] flex items-center relative overflow-hidden text-white">
+                <div class="container mx-auto px-4 relative z-10 grid lg:grid-cols-2 gap-16 items-center py-20">
+                    <div class="text-center lg:text-left">
+                        <span class="inline-block px-4 py-1.5 rounded-full bg-sky-500/20 text-sky-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8 border border-sky-500/30">Autókozmetika Szekszárd</span>
+                        <h2 class="text-4xl md:text-7xl font-black leading-[1.05] mb-8 italic">Nem az a kérdés, hogy lesznek-e <span class="text-sky-500">karcok</span> az autódon. <br><span class="text-slate-400">Hanem az, hogy időben lépsz-e.</span></h2>
+                        <p class="text-slate-300 text-lg md:text-xl mb-12 max-w-xl leading-relaxed font-medium">Autókozmetika Szekszárdon – tisztítás, kárpittisztítás, polírozás, kerámia védelem és prémium állapotmegőrzés egy helyen.</p>
+                        <div class="flex flex-col sm:flex-row gap-5">
+                            <button onclick="navigateTo('foglalas')" class="px-10 py-5 bg-sky-600 rounded-2xl font-black text-lg shadow-2xl italic">IDŐPONTOT FOGLALOK</button>
+                            <button onclick="navigateTo('diagnosztika')" class="px-10 py-5 bg-white/5 border border-white/20 rounded-2xl font-black text-lg italic hover:bg-white hover:text-slate-900 transition-all">SEGÍTS ELDÖNTENI!</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Milyen állapotban van most az autód? -->
+            <section class="py-24 bg-white">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-16 max-w-3xl mx-auto">
+                        <h2 class="text-3xl md:text-5xl font-black mb-6 italic italic text-slate-900 uppercase tracking-tighter">Milyen állapotban van most az autód?</h2>
+                        <p class="text-slate-500 text-xl italic font-medium">Nem biztos, hogy neked kell tudnod a szolgáltatás nevét. Elég, ha tudod, mi zavar az autódon. Mi segítünk megtalálni a hozzá illő megoldást.</p>
+                    </div>
+
+                    <div class="grid lg:grid-cols-3 gap-10">
+                        <!-- Külső -->
+                        <div class="bg-slate-50 p-10 rounded-[40px] border border-slate-100 flex flex-col h-full">
+                            <div class="w-16 h-16 bg-sky-600 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-xl shadow-sky-600/20"><i class="fa-solid fa-car-side"></i></div>
+                            <h3 class="text-2xl font-black mb-8 italic italic">Külső problémák</h3>
+                            <div class="space-y-3 flex-grow">
+                                <button onclick="startDiagnosis('karcos')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Karcos, matt vagy fakó fényezés <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="startDiagnosis('ujauto')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Új autót szeretnék megvédeni <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="startDiagnosis('lampa')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Bemattult fényszórók <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="startDiagnosis('horpadas')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Kavicsfelverődés / Horpadás <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                            </div>
+                        </div>
+                        <!-- Belső -->
+                        <div class="bg-slate-50 p-10 rounded-[40px] border border-slate-100 flex flex-col h-full">
+                            <div class="w-16 h-16 bg-sky-600 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-xl shadow-sky-600/20"><i class="fa-solid fa-chair"></i></div>
+                            <h3 class="text-2xl font-black mb-8 italic italic">Belső problémák</h3>
+                            <div class="space-y-3 flex-grow">
+                                <button onclick="startDiagnosis('koszos-belso')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Koszos, foltos kárpit <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="startDiagnosis('szag')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Szag, dohány vagy állatszőr <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="startDiagnosis('klima')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Klíma kellemetlen szaga <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="startDiagnosis('tetokarpit')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group text-sky-600 italic italic">Tetőkárpit leválás / kosz <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                            </div>
+                        </div>
+                        <!-- Speciális -->
+                        <div class="bg-slate-50 p-10 rounded-[40px] border border-slate-100 flex flex-col h-full">
+                            <div class="w-16 h-16 bg-sky-600 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-xl shadow-sky-600/20"><i class="fa-solid fa-crown"></i></div>
+                            <h3 class="text-2xl font-black mb-8 italic italic text-slate-900">Speciális / Prémium</h3>
+                            <div class="space-y-3 flex-grow">
+                                <button onclick="navigateTo('szolg-keramia')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Kerámia bevonat + Védelem <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="navigateTo('szolg-polir')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Többlépcsős polírozás <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="navigateTo('szolg-motorter')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Motortér tisztítás <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                                <button onclick="navigateTo('szolg-munkagep')" class="w-full text-left p-4 bg-white rounded-xl border border-slate-200 hover:border-sky-500 hover:bg-sky-50 transition-all font-bold text-sm flex justify-between items-center group italic">Haszonjármű / Munkagép <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Edukációs blokk -->
+            <section class="py-24 bg-slate-900 text-white relative overflow-hidden">
+                <div class="container mx-auto px-4 relative z-10 grid lg:grid-cols-2 gap-20 items-center">
+                    <div>
+                        <h2 class="text-4xl md:text-6xl font-black mb-10 italic italic uppercase">Nem minden tisztítás ugyanazt jelenti.</h2>
+                        <div class="space-y-6 text-slate-400 text-lg font-medium leading-relaxed italic">
+                            <p>A legtöbb autó tisztább lesz egy mosás után. A különbség abban van, hogy mi történik közben a fényezéssel, a kárpittal, a műanyagokkal és az érzékeny felületekkel.</p>
+                            <p>A helytelen technika, a túl erős vegyszer, a kemény víz vagy a rosszul megválasztott eljárás hosszú távon több kárt okozhat, mint maga a kosz.</p>
+                        </div>
+                        <div class="mt-12 p-10 bg-sky-600 rounded-3xl shadow-2xl relative italic">
+                            <p class="text-3xl font-black italic">"Nem a kosz teszi tönkre az autót. Hanem az, ahogy eltávolítják."</p>
+                        </div>
+                    </div>
+                    <div class="bg-white/5 rounded-[40px] p-12 border border-white/10">
+                        <div class="space-y-12">
+                            <div class="flex gap-8">
+                                <div class="text-sky-500 text-5xl mt-1"><i class="fa-solid fa-flask"></i></div>
+                                <div>
+                                    <h4 class="font-black text-2xl mb-2 italic italic text-white uppercase">Vegyszerek</h4>
+                                    <p class="text-slate-400 text-sm italic leading-relaxed">PH-semleges, anyagkímélő prémium hatóanyagok minden felületre.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-8">
+                                <div class="text-sky-500 text-5xl mt-1"><i class="fa-solid fa-droplet-slash"></i></div>
+                                <div>
+                                    <h4 class="font-black text-2xl mb-2 italic italic text-white uppercase">Technológiai víz</h4>
+                                    <p class="text-slate-400 text-sm italic leading-relaxed">Lágyított, ásványi anyagoktól mentes víz a vízkőmentes száradásért.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-8">
+                                <div class="text-sky-500 text-5xl mt-1"><i class="fa-solid fa-handshake-simple"></i></div>
+                                <div>
+                                    <h4 class="font-black text-2xl mb-2 italic italic text-white uppercase">Emberi tényező</h4>
+                                    <p class="text-slate-400 text-sm italic leading-relaxed">20 év tapasztalat a felületek viselkedésének ismeretében.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fő szolgáltatási irányok -->
+            <section class="py-24 bg-white">
+                <div class="container mx-auto px-4 grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Irány 1 -->
+                    <div class="service-card bg-slate-50 rounded-[40px] p-8 border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-mosas')">
+                        <h3 class="font-black text-xl mb-4 italic italic">1. Gyors tisztítás / autómosás</h3>
+                        <p class="text-xs text-slate-500 mb-8 italic">Rendszeres használatban lévő autó, hétköznapi karbantartás.</p>
+                        <div class="bg-slate-200 rounded-3xl aspect-[4/3] mb-8 flex items-center justify-center italic text-slate-400 text-xs font-bold">[Fotó: Tiszta SUV]</div>
+                        <button class="mt-auto w-full py-4 bg-white border border-slate-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:text-sky-600 transition-colors italic">Takarítási csomagok</button>
+                    </div>
+                    <!-- Irány 2 -->
+                    <div class="service-card bg-slate-50 rounded-[40px] p-8 border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-karpit')">
+                        <h3 class="font-black text-xl mb-4 italic italic">2. Belső mélytisztítás</h3>
+                        <p class="text-xs text-slate-500 mb-8 italic">Foltos ülés, gyerek/kutya nyomok, szagprobléma.</p>
+                        <div class="bg-slate-200 rounded-3xl aspect-[4/3] mb-8 flex items-center justify-center italic text-slate-400 text-xs font-bold">[Fotó: Kárpittisztítás]</div>
+                        <button class="mt-auto w-full py-4 bg-white border border-slate-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:text-sky-600 transition-colors italic">Kárpittisztítást kérek</button>
+                    </div>
+                    <!-- Irány 3 -->
+                    <div class="service-card bg-slate-50 rounded-[40px] p-8 border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-polir')">
+                        <h3 class="font-black text-xl mb-4 italic italic">3. Polírozás</h3>
+                        <p class="text-xs text-slate-500 mb-8 italic">Karcos, matt fényezés helyreállítása több lépcsőben.</p>
+                        <div class="bg-slate-200 rounded-3xl aspect-[4/3] mb-8 flex items-center justify-center italic text-slate-400 text-xs font-bold">[Fotó: Polírozás közben]</div>
+                        <button class="mt-auto w-full py-4 bg-white border border-slate-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:text-sky-600 transition-colors italic">Milyen polír kell?</button>
+                    </div>
+                    <!-- Irány 4 -->
+                    <div class="service-card bg-sky-600 rounded-[40px] p-8 flex flex-col h-full cursor-pointer shadow-2xl shadow-sky-600/30 text-white" onclick="navigateTo('szolg-keramia')">
+                        <h3 class="font-black text-xl mb-4 italic italic">4. Kerámia / védelem</h3>
+                        <p class="text-xs text-sky-100 mb-8 italic">Új vagy prémium autók tartós állapotmegőrzése.</p>
+                        <div class="bg-sky-800 rounded-3xl aspect-[4/3] mb-8 flex items-center justify-center italic text-sky-200 text-xs font-bold">[Fotó: Kerámia bevonat]</div>
+                        <button class="mt-auto w-full py-4 bg-white text-sky-600 rounded-2xl font-black text-xs uppercase tracking-widest italic">Kerámia védelmet szeretnék</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mélység USP blokk -->
+            <section class="py-24 bg-slate-50 border-y border-slate-100">
+                <div class="container mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
+                    <div class="bg-white p-12 md:p-16 rounded-[60px] shadow-xl border border-slate-100">
+                        <h2 class="text-4xl font-black mb-8 italic italic italic text-slate-900 leading-tight">A különbség nem a tisztaságban van, hanem abban, meddig jut el a munka.</h2>
+                        <p class="text-lg text-slate-600 mb-10 leading-relaxed italic">Egy autót sokféleképpen lehet „kitakarítani”. De nem mindegy, hogy csak a látható felületek lesznek tiszták, vagy valóban azok a részek is, ahol a szag, a por, a folt és a lerakódás eredete van.</p>
+                        <div class="grid sm:grid-cols-2 gap-6 mb-12 italic">
+                            <div class="flex items-center gap-3 font-bold text-slate-800"><i class="fa-solid fa-check text-sky-500"></i> Üléskiszerelés</div>
+                            <div class="flex items-center gap-3 font-bold text-slate-800"><i class="fa-solid fa-check text-sky-500"></i> Padlóig hatoló tisztítás</div>
+                            <div class="flex items-center gap-3 font-bold text-slate-800"><i class="fa-solid fa-check text-sky-500"></i> Mély kárpittisztítás</div>
+                            <div class="flex items-center gap-3 font-bold text-slate-800"><i class="fa-solid fa-check text-sky-500"></i> Szagforrás feltárása</div>
+                        </div>
+                        <button onclick="navigateTo('szolg-karpit')" class="text-sky-600 font-black flex items-center gap-3 italic uppercase text-xs tracking-[0.2em] group">
+                            MEGNÉZEM A MÉLYTISZTÍTÁSI LEHETŐSÉGEKET <i class="fa-solid fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-12">
+                        <!-- Tetőkárpit -->
+                        <div class="p-12 bg-amber-50 rounded-[40px] border border-amber-100 italic">
+                            <span class="inline-block px-3 py-1 bg-amber-200 text-amber-800 text-[10px] font-black uppercase mb-6 rounded-md">Érzékeny terület</span>
+                            <h3 class="text-3xl font-black mb-6 italic italic italic">Vannak felületek, amikhez nem mindenki nyúl hozzá.</h3>
+                            <p class="text-slate-600 leading-relaxed mb-10">A tetőkárpit az autó egyik legérzékenyebb belső felülete. Nem véletlen, hogy sok helyen nem vállalják. Mi csak akkor nyúlunk hozzá, ha az állapota biztonságosan kezelhető.</p>
+                            <button onclick="navigateTo('szolg-tetokarpit')" class="text-amber-800 font-black italic underline uppercase text-xs tracking-widest">Tetőkárpit problémám van</button>
+                        </div>
+                        <!-- Zsolti -->
+                        <div class="flex flex-col md:flex-row gap-10 items-center px-4">
+                            <div class="w-32 h-32 rounded-3xl bg-slate-300 flex-shrink-0 flex items-center justify-center italic text-slate-500 text-[10px] font-bold shadow-lg">[Portré]</div>
+                            <div>
+                                <h3 class="text-2xl font-black mb-4 italic italic italic italic">Nem minden autó ugyanazt a kezelést igényli.</h3>
+                                <p class="text-slate-500 italic mb-4">„Több mint 20 éve dolgozunk autókon. A legtöbb probléma nem ott kezdődik, ahol az ügyfél gondolja.”</p>
+                                <p class="font-black text-xs uppercase tracking-widest text-sky-600 italic">— Mészáros Zsolt, Tip-Top Autókozmetika</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bizalmi elemek -->
+            <section class="py-24 bg-white">
+                <div class="container mx-auto px-4">
+                    <h2 class="text-center text-4xl font-black mb-20 italic italic italic uppercase tracking-tighter text-slate-900">Nem mindegy, hova viszed az autódat.</h2>
+                    <div class="grid md:grid-cols-5 gap-8">
+                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 text-center">
+                            <i class="fa-solid fa-history text-sky-500 text-4xl mb-6"></i>
+                            <h4 class="font-black text-lg mb-2 italic">2006 óta</h4>
+                            <p class="text-[10px] text-slate-500 italic uppercase font-bold">Ismert helyi műhely Szekszárdon.</p>
+                        </div>
+                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 text-center">
+                            <i class="fa-solid fa-camera-web text-sky-500 text-4xl mb-6"></i>
+                            <h4 class="font-black text-lg mb-2 italic">Kamerázott</h4>
+                            <p class="text-[10px] text-slate-500 italic uppercase font-bold">Zárt műhely, 24h felügyelet.</p>
+                        </div>
+                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 text-center">
+                            <i class="fa-solid fa-vault text-sky-500 text-4xl mb-6"></i>
+                            <h4 class="font-black text-lg mb-2 italic">Kulcsszéf</h4>
+                            <p class="text-[10px] text-slate-500 italic uppercase font-bold">Biztonságos autóátvétel.</p>
+                        </div>
+                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 text-center">
+                            <i class="fa-solid fa-shield-check text-sky-500 text-4xl mb-6"></i>
+                            <h4 class="font-black text-lg mb-2 italic">Biztosítás</h4>
+                            <p class="text-[10px] text-slate-500 italic uppercase font-bold">Felelősségbiztosítással dolgozunk.</p>
+                        </div>
+                        <div class="p-8 bg-slate-50 rounded-3xl border border-slate-100 text-center">
+                            <i class="fa-solid fa-coffee text-sky-500 text-4xl mb-6"></i>
+                            <h4 class="font-black text-lg mb-2 italic">Ügyfélváró</h4>
+                            <p class="text-[10px] text-slate-500 italic uppercase font-bold">Wi-Fi, kávé, kényelem.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Final CTA -->
+            <section class="py-24 bg-sky-600 text-white text-center relative overflow-hidden">
+                <div class="container mx-auto px-4 relative z-10">
+                    <h2 class="text-4xl md:text-6xl font-black mb-12 italic italic italic leading-tight uppercase tracking-tighter italic">Tisztítani bárhol lehet.<br><span class="text-sky-200">Megőrizni az állapotot már kevesebb helyen.</span></h2>
+                    <div class="flex flex-col sm:flex-row justify-center gap-6">
+                        <button onclick="navigateTo('foglalas')" class="px-12 py-6 bg-white text-sky-600 rounded-3xl font-black text-2xl hover:scale-105 transition-all shadow-2xl italic italic uppercase">IDŐPONTOT FOGLALOK</button>
+                        <button onclick="navigateTo('diagnosztika')" class="px-12 py-6 bg-sky-800 text-white border border-sky-400 rounded-3xl font-black text-2xl hover:bg-sky-900 transition-all italic italic uppercase">SEGÍTS ELDÖNTENI!</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </script>
+
+    <!-- 2. SZOLGÁLTATÁSOK GYŰJTŐOLDAL -->
+    <script id="tpl-szolgaltatasok" type="text/template">
+        <div class="page-fade py-20 container mx-auto px-4">
+            <div class="text-center mb-16 max-w-3xl mx-auto">
+                <h1 class="text-4xl md:text-6xl font-black mb-6 italic">Szolgáltatásaink</h1>
+                <p class="text-slate-500 text-xl font-medium italic">Válaszd ki a keresett szolgáltatást, vagy ismerd meg megoldásainkat.</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-mosas')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Autómosás és külső-belső takarítás</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Gyors, hétköznapi igények kiszolgálása kíméletesen.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-karpit')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Kárpittisztítás és belső mélytisztítás</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Mélyreható tisztítás foltos ülésekhez és szagproblémákhoz.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-polir')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Polírozás és fényezéskorrekció</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Karcmentesítés és a gyári fény visszanyerése.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-keramia')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Kerámia bevonat</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Tartós védelem és elképesztő hidrofób hatás.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-klima')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Klímatisztítás és szagtalanítás</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Fertőtlenítés és kellemetlen szagok megszüntetése.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-tetokarpit')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Tetőkárpit tisztítás</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Biztonságos mélytisztítás az érzékeny ragasztott felületeken.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-lampa')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Lámpapolírozás és lámpafóliázás</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Bemattult búrák helyreállítása és védelme.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-motorter')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Motortér tisztítás</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Esztétikai és szakértői motormosás.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-white p-8 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-bor-szovet')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Bőr- és szövetjavítás</h3>
+                    <p class="text-sm text-slate-500 mb-8 italic flex-grow">Szakadások, kopások és horpadások szakszerű orvoslása.</p>
+                    <button class="text-sky-600 font-black text-xs uppercase tracking-widest text-left">Részletek <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+                <div class="service-card bg-slate-900 text-white p-8 rounded-[40px] shadow-lg flex flex-col h-full cursor-pointer" onclick="navigateTo('szolg-munkagep')">
+                    <h3 class="font-black text-xl mb-4 italic italic">Teherautó, munkagép takarítás</h3>
+                    <p class="text-sm text-slate-400 mb-8 italic flex-grow">Nagy járművek és flották professzionális takarítása.</p>
+                    <button class="text-sky-400 font-black text-xs uppercase tracking-widest text-left">Céges ajánlat <i class="fa-solid fa-chevron-right ml-2"></i></button>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- 3. ÁRAK OLDAL -->
+    <script id="tpl-arak" type="text/template">
+        <div class="page-fade py-24 container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl md:text-6xl font-black mb-8 italic">Áraink</h1>
+                <div class="bg-amber-50 border border-amber-100 p-8 rounded-[40px] text-amber-800 text-xs italic inline-block font-bold mb-8 italic">
+                    <i class="fa-solid fa-circle-info mr-2"></i> Figyelem: Az árak tájékoztató jellegűek!<br>
+                    A pontos díj függ az autó kategóriájától (Városi / SUV / Kisbusz) és állapotától.
+                </div>
+            </div>
+            <div class="grid gap-12">
+                <div class="bg-white p-10 rounded-[40px] shadow-lg border border-slate-100">
+                    <h3 class="text-2xl font-black mb-8 italic italic border-b pb-4">Takarítás és Kárpit</h3>
+                    <div class="space-y-4 font-bold text-sm">
+                        <div class="flex justify-between border-b border-slate-50 pb-2 italic"><span>Külső-belső takarítás</span> <span class="text-sky-600 italic">16.000 Ft-tól</span></div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2 italic"><span>Prémium kárpittisztítás</span> <span class="text-sky-600 italic">35.000 Ft-tól</span></div>
+                        <div class="flex justify-between italic"><span>Klíma ózonos fertőtlenítés</span> <span class="text-sky-600 italic">8.000 Ft</span></div>
+                    </div>
+                </div>
+                <div class="bg-slate-900 text-white p-10 rounded-[40px] shadow-xl">
+                    <h3 class="text-2xl font-black mb-8 italic italic border-b border-slate-700 pb-4">Polír és Védelem</h3>
+                    <div class="space-y-4 font-bold text-sm">
+                        <div class="flex justify-between border-b border-slate-800 pb-2 italic"><span>Fényesítő polírozás</span> <span class="text-sky-400 italic">45.000 Ft-tól</span></div>
+                        <div class="flex justify-between border-b border-slate-800 pb-2 italic"><span>Lámpapolírozás / db</span> <span class="text-sky-400 italic">10.000 Ft</span></div>
+                        <div class="flex justify-between italic"><span>Kerámia bevonat csomagok</span> <span class="text-sky-400 italic">80.000 Ft-tól</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- 4. AJÁNLATOK OLDAL -->
+    <script id="tpl-ajanlatok" type="text/template">
+        <div class="page-fade py-20 container mx-auto px-4 max-w-5xl">
+            <h1 class="text-4xl md:text-6xl font-black mb-12 italic text-center italic uppercase tracking-tighter">Ajánlatok és Akciók</h1>
+            <div class="grid md:grid-cols-2 gap-10">
+                <div class="service-card bg-white rounded-[40px] shadow-lg overflow-hidden border border-slate-100 flex flex-col h-full">
+                    <div class="h-48 bg-slate-200 flex items-center justify-center italic text-slate-400 text-xs font-bold">[Ajánlat Kép: Kerámia]</div>
+                    <div class="p-10 flex flex-col h-full">
+                        <h3 class="text-xl font-black mb-4 italic italic italic italic uppercase">Új autó welcome kerámia ajánlat</h3>
+                        <p class="text-sm text-slate-500 mb-6 italic italic leading-relaxed flex-grow">Védje meg újonnan vásárolt autója lakkját a legelső pillanattól! Prémium kerámia védelem welcome áron.</p>
+                        <div class="flex justify-between items-center mb-8 italic">
+                            <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">Érvényes: Visszavonásig</span>
+                            <span class="font-black text-2xl text-sky-600 italic uppercase">Érdeklődj!</span>
+                        </div>
+                        <button onclick="navigateTo('kapcsolat')" class="w-full py-4 bg-sky-600 text-white rounded-2xl font-black italic italic shadow-lg uppercase text-xs tracking-widest italic">Érdekel az ajánlat</button>
+                    </div>
+                </div>
+                <div class="service-card bg-white rounded-[40px] shadow-lg overflow-hidden border border-slate-100 flex flex-col h-full">
+                    <div class="h-48 bg-slate-200 flex items-center justify-center italic text-slate-400 text-xs font-bold">[Ajánlat Kép: Klíma]</div>
+                    <div class="p-10 flex flex-col h-full">
+                        <h3 class="text-xl font-black mb-4 italic italic italic italic uppercase">Tavaszi klímatisztítás akció</h3>
+                        <p class="text-sm text-slate-500 mb-6 italic italic leading-relaxed flex-grow">Készüljön fel a forróságra! Kombinált ózonos és vegyszeres fertőtlenítés most kedvezményesen.</p>
+                        <div class="flex justify-between items-center mb-8 italic">
+                            <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest italic">Érvényes: Május 31-ig</span>
+                            <span class="font-black text-2xl text-sky-600 italic uppercase">15.000 Ft</span>
+                        </div>
+                        <button onclick="navigateTo('foglalas')" class="w-full py-4 bg-sky-600 text-white rounded-2xl font-black italic italic shadow-lg uppercase text-xs tracking-widest italic">Érdekel az ajánlat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- 5. TUDÁSTÁR OLDAL -->
+    <script id="tpl-tudastar" type="text/template">
+        <div class="page-fade py-20 container mx-auto px-4 max-w-5xl">
+            <h1 class="text-5xl font-black mb-16 italic text-center italic tracking-tighter uppercase">Tudástár / Blog</h1>
+            <div class="grid lg:grid-cols-2 gap-12">
+                <div class="bg-white p-10 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full">
+                    <h3 class="text-2xl font-black mb-4 italic italic text-sky-600 uppercase italic">Miért karcosodik az autó mosás közben?</h3>
+                    <p class="text-slate-600 mb-8 italic italic">Rövid bevezetés a helytelen mosási technikákról és a gépi mosók veszélyeiről.</p>
+                    <div class="mt-auto pt-8 border-t border-slate-50 italic">
+                        <h4 class="font-black mb-2 text-slate-900 italic">Szakértői magyarázat</h4>
+                        <p class="text-xs text-slate-500 mb-6 italic leading-relaxed">Mészáros Zsolt magyarázata a karcmentes technológiáról.</p>
+                        <button onclick="navigateTo('szolg-polir')" class="text-sky-600 font-black italic uppercase text-[10px] tracking-widest">Kapcsolódó szolgáltatás <i class="fa-solid fa-arrow-right ml-2"></i></button>
+                    </div>
+                </div>
+                <div class="bg-white p-10 rounded-[40px] shadow-lg border border-slate-100 flex flex-col h-full">
+                    <h3 class="text-2xl font-black mb-4 italic italic text-sky-600 uppercase italic">Miért kényes a tetőkárpit tisztítása?</h3>
+                    <p class="text-slate-600 mb-8 italic italic">Gyakori tévhit: sokan úgy gondolják, a tetőkárpit ugyanúgy mosható, mint az ülések.</p>
+                    <div class="mt-auto pt-8 border-t border-slate-50 italic">
+                        <h4 class="font-black mb-2 text-slate-900 italic">Veszélyek</h4>
+                        <p class="text-xs text-slate-500 mb-6 italic leading-relaxed">A ragasztó elengedésének kockázatai és a professzionális technika.</p>
+                        <button onclick="navigateTo('szolg-tetokarpit')" class="text-sky-600 font-black italic uppercase text-[10px] tracking-widest">Mikor kell szolgáltatás? <i class="fa-solid fa-arrow-right ml-2"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- 6. RÓLUNK OLDAL -->
+    <script id="tpl-rolunk" type="text/template">
+        <div class="page-fade py-20 container mx-auto px-4 max-w-4xl text-center md:text-left">
+            <h1 class="text-5xl font-black mb-12 italic italic uppercase tracking-tighter italic">Tip-Top Szekszárd</h1>
+            <div class="grid md:grid-cols-2 gap-16 items-center mb-16">
+                <div>
+                    <h3 class="text-2xl font-black mb-6 italic italic italic">Több mint 20 év szakértelem</h3>
+                    <p class="text-slate-600 leading-relaxed italic mb-6">Mészáros Zsolt vezetésével 2006 óta dolgozunk Szekszárdon. 2017-ben költöztünk át a Pollack Mihály utcai modern műhelyünkbe.</p>
+                    <div class="space-y-4 font-bold text-xs uppercase text-sky-600 tracking-widest italic font-black">
+                        <p><i class="fa-solid fa-video mr-3"></i> Kamerázott műhely</p>
+                        <p><i class="fa-solid fa-vault mr-3"></i> Kulcsszéf és biztonság</p>
+                        <p><i class="fa-solid fa-car-side mr-3"></i> Csereautó lehetőség</p>
+                    </div>
+                </div>
+                <div class="bg-slate-200 aspect-square rounded-[40px] flex items-center justify-center italic text-slate-500 shadow-2xl font-bold">[Kép: A szekszárdi műhely és Zsolt]</div>
+            </div>
+            <div class="text-center">
+                <button onclick="navigateTo('foglalas')" class="px-12 py-5 bg-sky-600 text-white rounded-2xl font-black italic shadow-xl italic italic uppercase">RÁNK BÍZNÁD AZ AUTÓDAT? KÉRJ IDŐPONTOT</button>
+            </div>
+        </div>
+    </script>
+
+    <!-- 7. KAPCSOLAT OLDAL -->
+    <script id="tpl-kapcsolat" type="text/template">
+        <div class="page-fade py-20 container mx-auto px-4 max-w-5xl">
+            <h1 class="text-5xl font-black mb-16 italic text-center italic uppercase tracking-tighter italic">Kapcsolat</h1>
+            <div class="grid md:grid-cols-2 gap-16 items-start">
+                <div class="space-y-10">
+                    <div class="bg-white p-10 rounded-[40px] shadow-lg border border-slate-100 italic">
+                        <h3 class="text-xl font-black mb-8 italic italic">Elérhetőségek</h3>
+                        <div class="space-y-4 font-bold italic text-slate-800">
+                            <p class="flex items-center gap-4"><i class="fa-solid fa-location-dot text-sky-600"></i> 7100 Szekszárd, Pollack Mihály u. 37.</p>
+                            <p class="flex items-center gap-4"><i class="fa-solid fa-phone text-sky-600"></i> +36 30 123 4567 (Kozmetika)</p>
+                            <p class="flex items-center gap-4"><i class="fa-solid fa-phone text-sky-600"></i> +36 30 987 6543 (Mosó)</p>
+                            <p class="flex items-center gap-4"><i class="fa-solid fa-envelope text-sky-600"></i> info@tiptopkozmetika.hu</p>
+                            <p class="flex items-center gap-4"><i class="fa-solid fa-clock text-sky-600"></i> H-P: 08:00 - 17:00</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <button class="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black italic shadow-lg uppercase text-[10px] tracking-widest"><i class="fa-solid fa-map-location-dot mr-2"></i> Útvonalterv</button>
+                        <a href="tel:+36301234567" class="flex-1 py-4 bg-sky-600 text-white rounded-2xl font-black italic shadow-lg uppercase text-[10px] tracking-widest text-center"><i class="fa-solid fa-phone mr-2"></i> Hívás</a>
+                    </div>
+                </div>
+                <div class="bg-white p-10 rounded-[40px] shadow-lg border border-slate-100 italic">
+                    <h3 class="text-xl font-black mb-8 italic italic">Üzenet és Fotóbeküldés</h3>
+                    <form class="space-y-5">
+                        <input type="text" placeholder="Név" class="w-full bg-slate-50 border-none rounded-xl p-4 font-bold text-sm focus:ring-1 focus:ring-sky-500 outline-none">
+                        <input type="email" placeholder="E-mail" class="w-full bg-slate-50 border-none rounded-xl p-4 font-bold text-sm focus:ring-1 focus:ring-sky-500 outline-none">
+                        <textarea placeholder="Üzenet / Autó típusa..." rows="4" class="w-full bg-slate-50 border-none rounded-xl p-4 font-bold text-sm focus:ring-1 focus:ring-sky-500 outline-none"></textarea>
+                        <div class="p-4 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-center cursor-pointer group">
+                            <label class="cursor-pointer font-black">
+                                <i class="fa-solid fa-camera text-sky-600 text-xl group-hover:scale-110 transition-transform"></i>
+                                <span class="block text-[10px] uppercase font-black text-slate-400 mt-2 italic">Fotó beküldése (Opcionális)</span>
+                                <input type="file" class="hidden">
+                            </label>
+                        </div>
+                        <button type="submit" class="w-full py-5 bg-sky-600 text-white rounded-2xl font-black italic shadow-lg uppercase text-xs tracking-widest italic">Beküldés</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <!-- FOGLALÁS Sablon -->
+    <script id="tpl-foglalas" type="text/template">
+        <div class="page-fade py-20 container mx-auto px-4 max-w-xl italic">
+            <div class="bg-white p-12 rounded-[50px] shadow-2xl border border-slate-100 font-bold">
+                <h1 class="text-3xl font-black mb-8 italic text-center uppercase tracking-tighter">Időpontfoglalás</h1>
+                <form class="space-y-5 italic font-black">
+                    <input type="text" placeholder="Név" class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                    <input type="tel" placeholder="Telefonszám" class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                    <input type="text" placeholder="Autó típusa" class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                    <select class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-sky-500 italic">
+                        <option>Választott szolgáltatás...</option>
+                        <option>Autómosás & Takarítás</option>
+                        <option>Kárpittisztítás</option>
+                        <option>Polírozás</option>
+                        <option>Kerámia bevonat</option>
+                        <option>Segítséget kérek a választáshoz</option>
+                    </select>
+                    <textarea placeholder="Megjegyzés (Pl. foltok helye, szag típusa...)" rows="3" class="w-full bg-slate-50 border-none rounded-xl p-4 text-sm outline-none focus:ring-2 focus:ring-sky-500 italic"></textarea>
+                    <div class="p-4 bg-sky-50 rounded-xl text-[10px] text-sky-800 italic font-black uppercase tracking-widest">
+                        A beküldést követően kollégánk 24 órán belül visszahív az időpont véglegesítéséhez.
+                    </div>
+                    <button type="submit" class="w-full py-5 bg-sky-600 text-white rounded-2xl font-black italic shadow-xl italic uppercase">FOGLALÁSI KÉRÉS KÜLDÉSE</button>
+                </form>
+            </div>
+        </div>
+    </script>
+
+    <!-- DIAGNOSZTIKA Sablon -->
+    <script id="tpl-diagnosztika" type="text/template">
+        <div class="page-fade py-20 container mx-auto px-4 max-w-5xl text-center italic">
+            <h1 class="text-4xl font-black mb-6 italic italic italic uppercase tracking-tighter italic">Segíts eldönteni</h1>
+            <p class="text-slate-500 mb-12 italic font-bold">Válaszolj néhány kérdésre, és megmondjuk, melyik szolgáltatásra van szükséged.</p>
+            <div id="diag-step-1" class="bg-white p-12 rounded-[50px] shadow-xl border border-slate-100 text-left font-black max-w-2xl mx-auto">
+                <h3 class="text-xl font-black mb-8 italic uppercase tracking-widest">Mi a legfőbb problémád most az autóval?</h3>
+                <div class="grid gap-4">
+                    <button onclick="startDiagnosis('ujauto')" class="p-5 bg-slate-50 rounded-2xl font-bold border border-slate-100 hover:border-sky-500 transition-all text-sm text-left flex justify-between items-center group italic italic">Új autót szeretnék megvédeni <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                    <button onclick="startDiagnosis('karcos')" class="p-5 bg-slate-50 rounded-2xl font-bold border border-slate-100 hover:border-sky-500 transition-all text-sm text-left flex justify-between items-center group italic italic">Karcos / matt fényezés <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                    <button onclick="startDiagnosis('koszos-belso')" class="p-5 bg-slate-50 rounded-2xl font-bold border border-slate-100 hover:border-sky-500 transition-all text-sm text-left flex justify-between items-center group italic italic">Koszos / foltos belső kárpit <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                    <button onclick="startDiagnosis('klima')" class="p-5 bg-slate-50 rounded-2xl font-bold border border-slate-100 hover:border-sky-500 transition-all text-sm text-left flex justify-between items-center group italic italic">Szag / klíma probléma <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                    <button onclick="startDiagnosis('lampa')" class="p-5 bg-slate-50 rounded-2xl font-bold border border-slate-100 hover:border-sky-500 transition-all text-sm text-left flex justify-between items-center group italic italic">Bemattult lámpák <i class="fa-solid fa-chevron-right text-slate-300 group-hover:text-sky-600"></i></button>
+                </div>
+            </div>
+            <div id="diag-result" class="hidden bg-[#0f5272] text-white rounded-[50px] shadow-2xl text-left p-10 md:p-20 max-w-5xl mx-auto">
+                <p class="text-sky-300 text-xs md:text-sm font-black uppercase tracking-[0.25em] mb-8">Javaslatunk neked</p>
+                <h2 id="res-title" class="text-3xl md:text-5xl font-black italic mb-8 leading-tight"></h2>
+                <p id="res-desc" class="text-lg md:text-2xl leading-relaxed italic text-white/95 max-w-4xl mb-12"></p>
+                <div class="flex flex-col sm:flex-row gap-5">
+                    <button onclick="navigateTo('foglalas')" class="px-10 py-5 bg-white text-[#0f5272] rounded-2xl font-black text-lg italic uppercase shadow-xl">Időpontot foglalok</button>
+                    <button id="res-link" class="px-10 py-5 bg-sky-700/50 border border-sky-400/30 text-white rounded-2xl font-black text-lg italic uppercase">Részletek</button>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script>
+        const appContainer = document.getElementById('app-container');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+
+        function navigateTo(pageId) {
+            let template = document.getElementById(`tpl-${pageId}`);
+            
+            if (pageId.startsWith('szolg-') && !template) {
+                const map = {
+                    'szolg-mosas': 'szolg-mosas', 'szolg-karpit': 'szolg-karpit', 'szolg-polir': 'szolg-polir',
+                    'szolg-keramia': 'szolg-keramia', 'szolg-klima': 'szolg-klima', 'szolg-tetokarpit': 'szolg-tetokarpit',
+                    'szolg-lampa': 'szolg-lampa', 'szolg-motorter': 'szolg-motorter', 'szolg-bor-szovet': 'szolg-bor-szovet',
+                    'szolg-munkagep': 'szolg-munkagep'
+                };
+                template = document.getElementById(`tpl-${map[pageId]}`);
+            }
+
+            if (template) {
+                appContainer.innerHTML = template.innerHTML;
+            } else {
+                appContainer.innerHTML = `<div class="py-40 text-center font-black italic">Hoppá, ez az oldal még fejlesztés alatt áll! (${pageId})</div>`;
+            }
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('nav-active', btn.dataset.page === pageId);
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            mobileDrawer.classList.toggle('hidden');
+        }
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+
+        function startDiagnosis(type) {
+            navigateTo('diagnosztika');
+            setTimeout(() => {
+                nextDiag(type);
+            }, 50);
+        }
+
+        function nextDiag(type) {
+            const resBox = document.getElementById('diag-result');
+            const wizard = document.getElementById('diag-step-1');
+            const resTitle = document.getElementById('res-title');
+            const resDesc = document.getElementById('res-desc');
+            const resLink = document.getElementById('res-link');
+
+            const database = {
+                'karcos': {
+                    title: 'Többlépcsős Polírozás + Kerámia bevonat',
+                    desc: 'A fényezésed mélyebb karcmentesítést igényel a gyári fény visszanyeréséhez. Javasoljuk a 2 vagy 3 lépcsős polírozást, majd egy tartós kerámia bevonatot a végeredmény megőrzéséhez.',
+                    link: 'szolg-polir'
+                },
+                'ujauto': {
+                    title: 'Welcome Új Autó Védelem (Kerámia)',
+                    desc: 'Az új autó gyári lakkja most a legsérülékenyebb. Egy Bronz vagy Gold kerámia csomaggal évekig megvédjük a madárürüléktől, UV-től és karcoktól.',
+                    link: 'szolg-keramia'
+                },
+                'koszos-belso': {
+                    title: 'Belső Mélytisztítás & Fertőtlenítés',
+                    desc: 'A szövetek mélyén lévő foltokat és baktériumokat csak professzionális vizes mélytisztítással tudjuk biztonságosan eltávolítani.',
+                    link: 'szolg-karpit'
+                },
+                'koszos': {
+                    title: 'Prémium Külső-Belső Takarítás',
+                    desc: 'Egy alapos, minden részletre kiterjedő takarításra van szükséged, amely visszahozza a tisztaság érzését a hétköznapokban.',
+                    link: 'szolg-mosas'
+                },
+                'klima': {
+                    title: 'Ózonos + Vegyszeres Klímapakett',
+                    desc: 'A szagokat a szellőzőrendszerben lerakódott gombák okozzák. A kombinált kezelésünk teljesen sterillé teszi az utasteret.',
+                    link: 'szolg-klima'
+                },
+                'szag': {
+                    title: 'Ózonos + Vegyszeres Klímapakett',
+                    desc: 'A szagokat a szellőzőrendszerben lerakódott gombák okozzák. A kombinált kezelésünk teljesen sterillé teszi az utasteret.',
+                    link: 'szolg-klima'
+                },
+                'tetokarpit': {
+                    title: 'Kíméletes Tetőkárpit Tisztítás',
+                    desc: 'Mivel ez egy kényes felület, előzetes állapotfelmérés után speciális, alacsony nedvességtartalmú eljárással varázsoljuk tisztává.',
+                    link: 'szolg-tetokarpit'
+                },
+                'lampa': {
+                    title: 'Fényszóró polírozás',
+                    desc: 'A bemattult lámpabúra rontja a fényerőt és az autó megjelenését. Polírozással visszahozzuk az átlátszóságot, majd védőréteggel tartósítjuk az eredményt.',
+                    link: 'szolg-lampa'
+                },
+                'horpadas': {
+                    title: 'Kavicsfelverődés / Horpadás javítás',
+                    desc: 'A kisebb sérüléseknél először állapotfelmérést javaslunk, hogy látszódjon, javítható-e polírral, pontjavítással vagy külön karosszéria eljárással.',
+                    link: 'szolg-bor-szovet'
+                }
+            };
+
+            if (database[type] && resBox && wizard && resTitle && resDesc && resLink) {
+                resTitle.innerText = database[type].title;
+                resDesc.innerText = database[type].desc;
+                resLink.onclick = () => navigateTo(database[type].link);
+                wizard.classList.add('hidden');
+                resBox.classList.remove('hidden');
+                resBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        window.onload = () => navigateTo('fooldal');
+    </script>
+</body>
+</html>
